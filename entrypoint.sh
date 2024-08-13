@@ -13,13 +13,15 @@ groupmod -o -g "$PGID" abc
 usermod -o -u "$PUID" abc
 
 # update permissions on volumes
-VOL_PATHS=("/data")
-for VOL_PATH in "${VOL_PATHS[@]}"; do
-    if [[ ! "$(stat -c %u "${VOL_PATH}")" == "${PUID}" ]]; then
-        echo "Change in ownership detected, please wait while permissions are updated"
-        matchown -R abc:abc "${VOL_PATH}"
-    fi
-done
+if [ -n "${VOLUME_PATHS:-}" ]; then
+    # the volumes paths are separated by `:`
+    echo "${VOLUME_PATHS}" | tr ':' '\n' | while IFS= read -r VOLUME_PATH; do
+        if [[ ! "$(stat -c %u "${VOL_PATH}")" == "${PUID}" ]]; then
+            echo "Change in ownership detected, please wait while permissions are updated"
+            matchown -R abc:abc "${VOL_PATH}"
+        fi
+    done
+fi
 
 su - abc
 exec "$@"
