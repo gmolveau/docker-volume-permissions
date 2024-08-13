@@ -7,6 +7,7 @@ services:
     environment:
       - PUID=${UID:-911} # or specify a UID
       - PGID=${GID:-911} # or specify a GID
+      - VOLUME_PATHS="/data"
     volumes:
       - "./files:/files"
       - "./data:/data"
