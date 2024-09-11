@@ -6,17 +6,30 @@ This example solves this problem with a custom entrypoint, that reads env variab
 
 Take into consideration that with this solution, the container initially starts as root, but the entrypoint then switches to another user to run your command.
 
-It is possible to use another method using the setuid bit, but it has some caveats (eg. impossible to restart a container because the setuid can only be used once - so only useful for ephemeral containers).
+It is possible to use another method using the `setuid` bit of the script, but it has some caveats (eg. impossible to restart a container because the setuid can only be used once - so only useful for **ephemeral** containers).
+
+Please note that the `$UID` and `$GID` are `shell` variables, not environment variables. It is not possible to use them directly in the docker compose file. So if you want to dynamically get the `$UID` and `$GID` of the current user, a script (or a makefile) can be used to set those env variables dynamically.
+
+For example : `PUID=$(id -u) PGID=$(id -g) docker compose up -d`.
 
 ## Try it
 
 ```shell
 docker compose build --no-cache
-docker compose up
+
+PUID=$(id -u) PGID=$(id -g) docker compose up
+# or
+make run
 # notice that a `ok.txt` file has been created with the correct permissions in the `data` folder
 docker compose down
 docker image rm vol:test
 ```
+
+## Other solutions
+
+- use named volumes, not bind-hosted
+- use a S3 storage (eg. minio)
+- use [s6-overlay](https://github.com/just-containers/s6-overlay) with `s6-setuidgid`
 
 ## Sources and inspirations
 

@@ -5,8 +5,8 @@ services:
       dockerfile: Dockerfile
     image: vol:test
     environment:
-      - PUID=${UID:-911} # or specify a UID
-      - PGID=${GID:-911} # or specify a GID
+      - PUID=${PUID:-1029}
+      - PGID=${PGID:-1029}
       - VOLUME_PATHS="/data"
     volumes:
       - "./files:/files"
