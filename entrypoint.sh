@@ -23,4 +23,4 @@ if [ -n "${VOLUME_PATHS:-}" ]; then
     done
 fi
 
-su - abc --preserve-environment --command "cd $(pwd) && $*"
+runuser -u abc "$@"
